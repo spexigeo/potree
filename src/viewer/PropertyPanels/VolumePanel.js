@@ -29,6 +29,7 @@ export class VolumePanel extends MeasurePanel{
 
 		this.elContent = $(`
 			<div class="measurement_content selectable">
+				<span class="title_container"></span>
 				<span class="coordinates_table_container"></span>
 
 				<table class="measurement_value_table">
@@ -112,6 +113,8 @@ export class VolumePanel extends MeasurePanel{
 				this.elDownloadButton.hide();
 			}
 		}
+
+		
 
 		this.elCopyRotation = this.elContent.find("img[name=copyRotation]");
 		this.elCopyRotation.click( () => {
@@ -345,6 +348,10 @@ export class VolumePanel extends MeasurePanel{
 		let elCoordiantesContainer = this.elContent.find('.coordinates_table_container');
 		elCoordiantesContainer.empty();
 		elCoordiantesContainer.append(this.createCoordinatesTable([this.measurement.position]));
+
+		let elTitleContainer = this.elContent.find('.title_container');
+		elTitleContainer.empty();
+		elTitleContainer.append(this.createEditableTitle());
 
 		{
 			let angles = this.measurement.rotation.toVector3();

@@ -292,6 +292,20 @@ export class Sidebar{
 			let currentShow = this.measuringTool.showLabels ? "SHOW" : "HIDE";
 			elShow.find(`input[value=${currentShow}]`).trigger("click");
 		}
+
+		{ // SHOW / HIDE Titles
+			let elShow = $("#measurement_options_show-titles");
+			elShow.selectgroup({title: "Show/Hide titles"});
+
+			elShow.find("input").click( (e) => {
+				const show = e.target.value === "SHOW";
+				this.measuringTool.showTitleLabels = show;
+				this.volumeTool.showTitleLabels = show;
+			});
+
+			let currentShow = this.volumeTool.showTitleLabels ? "SHOW" : "HIDE";
+			elShow.find(`input[value=${currentShow}]`).trigger("click");
+		}
 	}
 
 	initScene(){
@@ -568,12 +582,20 @@ export class Sidebar{
 			let measurement = e.measurement;
 			let icon = Utils.getMeasurementIcon(measurement);
 			createNode(measurementID, measurement.name, icon, measurement);
+
+			measurement.addEventListener("title_changed", () => {
+				let measurementRoot = $("#jstree_scene").jstree().get_json("measurements");
+				let jsonNode = measurementRoot.children.find(child => child.data.uuid === measurement.uuid);
+				
+				$.jstree.reference(jsonNode.id).rename_node(jsonNode.id, measurement.title);
+			});
 		};
 
 		let onVolumeAdded = (e) => {
 			let volume = e.volume;
 			let icon = Utils.getMeasurementIcon(volume);
-			let node = createNode(measurementID, volume.name, icon, volume);
+			let node = createNode(measurementID, volume.title || volume.name, icon, volume);
+			this.measurementsMapping.set(volume, measurementID);
 
 			volume.addEventListener("visibility_changed", () => {
 				if(volume.visible){
@@ -581,6 +603,13 @@ export class Sidebar{
 				}else{
 					tree.jstree('uncheck_node', node);
 				}
+			});
+
+			volume.addEventListener("title_changed", () => {
+				let volumeRoot = $("#jstree_scene").jstree().get_json("measurements");
+				let jsonNode = volumeRoot.children.find(child => child.data.uuid === volume.uuid);
+				
+				$.jstree.reference(jsonNode.id).rename_node(jsonNode.id, volume.title);
 			});
 		};
 
@@ -719,6 +748,8 @@ export class Sidebar{
 				this.annotationMapping.set(annotation, annotationID);
 			});
 		}
+
+		this.measurementsMapping = new Map();
 
 		const scene = this.viewer.scene;
 		for(let pointcloud of scene.pointclouds){

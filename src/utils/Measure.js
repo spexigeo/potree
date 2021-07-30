@@ -6,6 +6,21 @@ import {Line2} from "../../libs/three.js/lines/Line2.js";
 import {LineGeometry} from "../../libs/three.js/lines/LineGeometry.js";
 import {LineMaterial} from "../../libs/three.js/lines/LineMaterial.js";
 
+function createTitleLabel() {
+    const titleLabel = new TextSprite('');
+
+    titleLabel.borderThickness = 0;
+    titleLabel.setTextColor({ r: 0, g: 0, b: 0, a: 0.8 });
+    titleLabel.setBorderColor({ r: 255, g: 255, b: 255, a: 0.7 });
+    titleLabel.setBackgroundColor({ r: 255, g: 255, b: 255, a: 0.7 });
+    titleLabel.fontsize = 15;
+    titleLabel.material.depthTest = false;
+    titleLabel.material.opacity = 1;
+    titleLabel.visible = false;
+
+    return titleLabel;
+}
+
 function createHeightLine(){
 	let lineGeometry = new LineGeometry();
 
@@ -297,7 +312,9 @@ export class Measure extends THREE.Object3D {
 		this._showHeight = false;
 		this._showEdges = true;
 		this._showAzimuth = false;
+		this._title = '';
 		this.maxMarkers = Number.MAX_SAFE_INTEGER;
+		this.title = '';
 
 		this.sphereGeometry = new THREE.SphereGeometry(0.4, 10, 10);
 		this.color = new THREE.Color(0xff0000);
@@ -309,6 +326,7 @@ export class Measure extends THREE.Object3D {
 		this.angleLabels = [];
 		this.coordinateLabels = [];
 
+		this.titleLabel = createTitleLabel();
 		this.heightEdge = createHeightLine();
 		this.heightLabel = createHeightLabel();
 		this.areaLabel = createAreaLabel();
@@ -319,6 +337,7 @@ export class Measure extends THREE.Object3D {
 
 		this.azimuth = createAzimuth();
 
+		this.add(this.titleLabel);
 		this.add(this.heightEdge);
 		this.add(this.heightLabel);
 		this.add(this.areaLabel);
@@ -931,6 +950,20 @@ export class Measure extends THREE.Object3D {
 	set showDistances (value) {
 		this._showDistances = value;
 		this.update();
+	}
+
+	get title(){
+		return this._title;
+	}
+
+	set title(value){
+		if(this._title !== value){
+			this._title = value;
+
+			console.log("title changed")
+
+			this.dispatchEvent({type: "title_changed", object: this});
+		}
 	}
 
 }

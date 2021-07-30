@@ -12,6 +12,30 @@ export class MeasurePanel{
 		this._update = () => { this.update(); };
 	}
 
+	createEditableTitle() {
+		let titleContainer = $(`
+			<li>
+				<label style="whitespace: nowrap">
+					<span class="heading">Title</span>
+					<div id="measurement_title" contenteditable="true">
+						Title
+					</div>
+				</label>
+			</li>
+		`)
+
+		this.elTitle = titleContainer.find("#measurement_title").html(this.measurement.title || this.measurement.name);
+
+		this.elTitle[0].addEventListener("input", () => {
+			const title = this.elTitle.html();
+			this.measurement.title = title;
+			console.log("meaus", title)
+
+		}, false);
+
+		return titleContainer
+	}
+
 	createCoordinatesTable(points){
 		let table = $(`
 			<table class="measurement_value_table">

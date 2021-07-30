@@ -16,8 +16,22 @@ export class Volume extends THREE.Object3D {
 
 		this._clip = args.clip || false;
 		this._visible = true;
-		this.showVolumeLabel = true;
+		this._title = '';
 		this._modifiable = args.modifiable || true;
+
+		this.showVolumeLabel = true;
+
+		this.title = '';
+		this.titleLabel = new TextSprite('0');
+		this.titleLabel.borderThickness = 0
+		this.titleLabel.setTextColor({ r: 0, g: 0, b: 0, a: 0.8 })
+		this.titleLabel.setBorderColor({ r: 255, g: 255, b: 255, a: 0.7 })
+		this.titleLabel.setBackgroundColor({ r: 255, g: 255, b: 255, a: 0.7 })
+		this.titleLabel.fontsize = 20
+		this.titleLabel.material.depthTest = false
+		this.titleLabel.material.opacity = 1
+		this.titleLabel.visible = false
+		this.add(this.titleLabel)
 
 		this.label = new TextSprite('0');
 		this.label.setBorderColor({r: 0, g: 255, b: 0, a: 0.0});
@@ -41,11 +55,37 @@ export class Volume extends THREE.Object3D {
 			}
 		};
 
+		this.titleLabel.updateMatrixWorld = () => {
+			let volumeWorldPos = new THREE.Vector3()
+			volumeWorldPos.setFromMatrixPosition(this.matrixWorld)
+			this.titleLabel.position.copy(volumeWorldPos)
+			this.titleLabel.position.z += Math.floor(this.scale.z / 3)
+			this.titleLabel.updateMatrix()
+			this.titleLabel.matrixWorld.copy(this.titleLabel.matrix)
+			this.titleLabel.matrixWorldNeedsUpdate = false
+
+			for (let i = 0, l = this.titleLabel.children.length; i < l; i++) {
+				this.titleLabel.children[i].updateMatrixWorld(true)
+			}
+		}
+
 		{ // event listeners
 			this.addEventListener('select', e => {});
 			this.addEventListener('deselect', e => {});
 		}
 
+	}
+
+	get title(){
+		return this._title;
+	}
+
+	set title(value){
+		if(this._title !== value){
+			this._title = value;
+
+			this.dispatchEvent({type: "title_changed", object: this});
+		}
 	}
 
 	get visible(){

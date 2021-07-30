@@ -9,6 +9,7 @@ export class VolumeTool extends EventDispatcher{
 		super();
 
 		this.viewer = viewer;
+		this.showTitleLabels = false;
 		this.renderer = viewer.renderer;
 
 		this.addEventListener('start_inserting_volume', e => {
@@ -135,6 +136,7 @@ export class VolumeTool extends EventDispatcher{
 		let volumes = this.viewer.scene.volumes;
 		for (let volume of volumes) {
 			let label = volume.label;
+        	let titleLabel = volume.titleLabel;
 			
 			{
 
@@ -143,12 +145,21 @@ export class VolumeTool extends EventDispatcher{
 
 				let scale = (70 / pr);
 				label.scale.set(scale, scale, scale);
+          		titleLabel.scale.set(scale, scale, scale);
 			}
 
 			let calculatedVolume = volume.getVolume();
 			calculatedVolume = calculatedVolume / Math.pow(this.viewer.lengthUnit.unitspermeter, 3) * Math.pow(this.viewer.lengthUnitDisplay.unitspermeter, 3);  //convert to cubic meters then to the cubic display unit
 			let text = Utils.addCommas(calculatedVolume.toFixed(3)) + ' ' + this.viewer.lengthUnitDisplay.code + '\u00B3';
+			
 			label.setText(text);
+
+			if (this.showTitleLabels) {
+				titleLabel.setText(volume.title || volume.name);
+				titleLabel.visible = true
+			} else {
+				titleLabel.visible = false
+			}
 		}
 	}
 

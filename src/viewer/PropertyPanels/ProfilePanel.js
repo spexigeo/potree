@@ -9,6 +9,7 @@ export class ProfilePanel extends MeasurePanel{
 		let removeIconPath = Potree.resourcePath + '/icons/remove.svg';
 		this.elContent = $(`
 			<div class="measurement_content selectable">
+				<span class="title_container"></span>
 				<span class="coordinates_table_container"></span>
 				<br>
 				<span style="display:flex">
@@ -108,6 +109,10 @@ export class ProfilePanel extends MeasurePanel{
 		let elCoordiantesContainer = this.elContent.find('.coordinates_table_container');
 		elCoordiantesContainer.empty();
 		elCoordiantesContainer.append(this.createCoordinatesTable(this.measurement.points));
+
+		let elTitleContainer = this.elContent.find('.title_container');
+		elTitleContainer.empty();
+		elTitleContainer.append(this.createEditableTitle());
 	}
 
 	async download(){

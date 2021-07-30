@@ -134,6 +134,7 @@ export class MeasuringTool extends EventDispatcher{
 		});
 
 		this.showLabels = true;
+		this.showTitleLabels = false;
 		this.scene = new THREE.Scene();
 		this.scene.name = 'scene_measurement';
 		this.light = new THREE.PointLight(0xffffff, 1.0);
@@ -311,6 +312,28 @@ export class MeasuringTool extends EventDispatcher{
 				let pr = Utils.projectedRadius(1, camera, distance, clientWidth, clientHeight);
 				let scale = (70 / pr);
 				label.scale.set(scale, scale, scale);
+
+				if (j === 0) {
+					let titleLabel = measure.titleLabel;
+					if (!this.showTitleLabels) {
+						titleLabel.visible = false;
+						continue;
+					}
+					titleLabel.visible = true;
+					let titleLabelPos = new THREE.Vector3(
+						((screenPos.x + 35) / clientWidth) * 2 - 1,
+						-((screenPos.y + 30) / clientHeight) * 2 + 1,
+						0.5
+					);
+					titleLabelPos.unproject(camera);
+					if (this.viewer.scene.cameraMode == CameraMode.PERSPECTIVE) {
+						let direction = titleLabelPos.sub(camera.position).normalize();
+						titleLabelPos = new THREE.Vector3().addVectors(camera.position, direction.multiplyScalar(distance));
+					}
+					titleLabel.position.copy(titleLabelPos); 
+					titleLabel.scale.set(scale, scale, scale);
+					titleLabel.setText(measure.title || measure.name)
+				}
 			}
 
 			// height label
