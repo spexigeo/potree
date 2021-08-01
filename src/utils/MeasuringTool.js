@@ -321,8 +321,8 @@ export class MeasuringTool extends EventDispatcher{
 					}
 					titleLabel.visible = true;
 					let titleLabelPos = new THREE.Vector3(
-						((screenPos.x + 35) / clientWidth) * 2 - 1,
-						-((screenPos.y + 30) / clientHeight) * 2 + 1,
+						((screenPos.x) / clientWidth) * 2 - 1,
+						-((screenPos.y + 45) / clientHeight) * 2 + 1,
 						0.5
 					);
 					titleLabelPos.unproject(camera);
