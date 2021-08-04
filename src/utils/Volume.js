@@ -59,7 +59,9 @@ export class Volume extends THREE.Object3D {
 			let volumeWorldPos = new THREE.Vector3()
 			volumeWorldPos.setFromMatrixPosition(this.matrixWorld)
 			this.titleLabel.position.copy(volumeWorldPos)
-			this.titleLabel.position.z += Math.floor(this.scale.z / 3)
+			this.titleLabel.position.y += this.scale.y/3
+			this.titleLabel.position.x -= this.scale.x/3
+			this.titleLabel.position.z += this.scale.z/3
 			this.titleLabel.updateMatrix()
 			this.titleLabel.matrixWorld.copy(this.titleLabel.matrix)
 			this.titleLabel.matrixWorldNeedsUpdate = false
