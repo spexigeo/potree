@@ -629,6 +629,7 @@ export class Measure extends THREE.Object3D {
 			let point = this.points[0];
 			let position = point.position;
 			this.spheres[0].position.copy(position);
+			this.spheres[0].material.color = this.color;
 
 			{ // coordinate labels
 				let coordinateLabel = this.coordinateLabels[0];
